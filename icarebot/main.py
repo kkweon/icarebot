@@ -25,11 +25,16 @@ def subscribe_all_subreddits(reddit: praw.Reddit):
 
     for comment in all_subreddits.stream.comments():
         if should_I_care(comment.body):
-            LOGGER.info("Found a target: %s %s", comment.body, comment.url)
-            response = get_response()
-            LOGGER.info("Sending a response: %s", response)
-            reply = reply.reply(response)
-            LOGGER.info("Comment was created at %s", reply.url)
+            try:
+                LOGGER.info("Found a target: %s %s", comment.body[:10], "https://reddit.com" + comment.permalink)
+                response = get_response()
+                LOGGER.info("Sending a response: %s", response)
+                reply = comment.reply(response)
+                LOGGER.info("Comment was created at %s", reply.permalink)
+
+            except Exception as e:
+                LOGGER.fatal("Error occurred: %s", e)
+
 
 
 def should_I_care(text) -> bool:
