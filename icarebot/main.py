@@ -17,9 +17,20 @@ def get_reddit_instance() -> praw.Reddit:
     except NoSectionError:
         import os
 
+        LOGGER.warning("Please create a praw.ini with [icarebot] section")
+
         client_id = os.environ.get("client_id", "")
         client_secret = os.environ.get("client_secret", "")
-        reddit = praw.Reddit(client_id=client_id, client_secret=client_secret)
+        username = os.environ.get("username", "")
+        password = os.environ.get("password", "")
+        user_agent = os.environ.get("user_agent", "")
+        reddit = praw.Reddit(
+            client_id=client_id,
+            client_secret=client_secret,
+            username=username,
+            password=password,
+            user_agent=user_agent,
+        )
     return reddit
 
 
@@ -41,7 +52,7 @@ def subscribe_all_subreddits(reddit: praw.Reddit):
                 LOGGER.info("Comment was created at %s", reply.permalink)
 
             except Exception as e:
-                LOGGER.fatal("Error occurred: %s", e)
+                LOGGER.error("Error occurred: %s", e)
 
 
 def should_I_care(text) -> bool:
