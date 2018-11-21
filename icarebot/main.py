@@ -9,13 +9,16 @@ LOGGER = logging.getLogger(__name__)
 
 
 def get_reddit_instance() -> praw.Reddit:
-    """
-    >>> reddit = get_reddit_instance()
-    >>> reddit.read_only
-    False
-    """
-    reddit = praw.Reddit("icarebot")
-    LOGGER.info("got reddit instance %s", reddit)
+    """Returns a Reddit instance"""
+    try:
+        reddit = praw.Reddit("icarebot")
+        LOGGER.info("got reddit instance %s", reddit)
+    except KeyError:
+        import os
+
+        client_id = os.environ.get("client_id", "")
+        client_secret = os.environ.get("client_secret", "")
+        reddit = praw.Reddit(client_id=client_id, client_secret=client_secret)
     return reddit
 
 
@@ -26,7 +29,11 @@ def subscribe_all_subreddits(reddit: praw.Reddit):
     for comment in all_subreddits.stream.comments():
         if should_I_care(comment.body):
             try:
-                LOGGER.info("Found a target: %s %s", comment.body[:10], "https://reddit.com" + comment.permalink)
+                LOGGER.info(
+                    "Found a target: %s %s",
+                    comment.body[:10],
+                    "https://reddit.com" + comment.permalink,
+                )
                 response = get_response()
                 LOGGER.info("Sending a response: %s", response)
                 reply = comment.reply(response)
@@ -34,7 +41,6 @@ def subscribe_all_subreddits(reddit: praw.Reddit):
 
             except Exception as e:
                 LOGGER.fatal("Error occurred: %s", e)
-
 
 
 def should_I_care(text) -> bool:
