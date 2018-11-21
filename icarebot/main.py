@@ -80,7 +80,11 @@ def setup_logger(loglevel: int):
     ch = logging.StreamHandler()
     ch.setFormatter(formatter)
 
+    fh = logging.FileHandler("/tmp/icarebot.log")
+    fh.setFormatter(formatter)
+
     LOGGER.addHandler(ch)
+    LOGGER.addHandler(fh)
 
 
 def main(args):
