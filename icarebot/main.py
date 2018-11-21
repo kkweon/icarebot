@@ -2,6 +2,7 @@
 MAIN CLI APP
 """
 import logging
+from configparser import NoSectionError
 
 import praw
 
@@ -13,7 +14,7 @@ def get_reddit_instance() -> praw.Reddit:
     try:
         reddit = praw.Reddit("icarebot")
         LOGGER.info("got reddit instance %s", reddit)
-    except KeyError:
+    except NoSectionError:
         import os
 
         client_id = os.environ.get("client_id", "")

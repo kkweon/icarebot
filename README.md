@@ -1,4 +1,6 @@
 # icarebot
+[![Build Status](https://travis-ci.com/kkweon/icarebot.svg?branch=master)](https://travis-ci.com/kkweon/icarebot)
+
 Reddit icarebot
 
 ## Requirements
