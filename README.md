@@ -11,14 +11,13 @@ Reddit icarebot
 
 ## Run
 
-- Copy praw.ini.template to praw.ini
-- Fill out
+- Copy [praw.ini.template](./praw.ini.template) and rename to praw.ini
+- Fill out the following section
     ```
-client_id = yourclientbotid
-client_secret = yourclientbotsecret
-username = username
-password = password
-
+    client_id = yourclientbotid
+    client_secret = yourclientbotsecret
+    username = username
+    password = password
     ```
 - Run
     ```
