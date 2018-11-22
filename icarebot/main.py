@@ -39,18 +39,22 @@ def subscribe_all_subreddits(reddit: praw.Reddit):
     all_subreddits = reddit.subreddit("all")
 
     for comment in all_subreddits.stream.comments():
-        if is_not_icarebot(comment) and should_I_care(comment.body):
+        if is_not_icarebot(comment):
             try:
-                LOGGER.info(
-                    "Found a target: %s %s",
-                    comment.body[:10],
-                    "https://reddit.com" + comment.permalink,
-                )
-                response = get_response()
-                LOGGER.info("Sending a response: %s", response)
-                reply = comment.reply(response)
-                LOGGER.info("Comment was created at %s", reply.permalink)
-
+                if should_I_care(comment.body):
+                    LOGGER.info(
+                        "Found a target: %s %s",
+                        comment.body[:10],
+                        "https://reddit.com" + comment.permalink,
+                    )
+                    response = get_response()
+                    LOGGER.info("Sending a response: %s", response)
+                    reply = comment.reply(response)
+                    LOGGER.info("Comment was created at %s", reply.permalink)
+                elif comment.body.lower() == "f":
+                    LOGGER.info("Found F %s", "https://reddit.com" + comment.permalink)
+                    reply = comment.reply(comment.body)
+                    LOGGER.info("Comment was created at %s", reply.permalink)
             except Exception as e:
                 LOGGER.error("Error occurred: %s", e)
 
