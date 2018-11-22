@@ -51,10 +51,6 @@ def subscribe_all_subreddits(reddit: praw.Reddit):
                     LOGGER.info("Sending a response: %s", response)
                     reply = comment.reply(response)
                     LOGGER.info("Comment was created at %s", reply.permalink)
-                elif comment.body.lower() == "f":
-                    LOGGER.info("Found F %s", "https://reddit.com" + comment.permalink)
-                    reply = comment.reply(comment.body)
-                    LOGGER.info("Comment was created at %s", reply.permalink)
             except Exception as e:
                 LOGGER.error("Error occurred: %s", e)
 
