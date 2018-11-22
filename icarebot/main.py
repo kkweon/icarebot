@@ -39,7 +39,7 @@ def subscribe_all_subreddits(reddit: praw.Reddit):
     all_subreddits = reddit.subreddit("all")
 
     for comment in all_subreddits.stream.comments():
-        if should_I_care(comment.body):
+        if is_not_icarebot(comment) and should_I_care(comment.body):
             try:
                 LOGGER.info(
                     "Found a target: %s %s",
@@ -97,6 +97,15 @@ I care""".format(
 I care""".format(
         target_text
     )
+
+
+def is_not_icarebot(comment: praw.models.Comment) -> bool:
+    author = comment.author
+
+    if author:
+        return author.name != "icarebot"
+
+    return True
 
 
 def setup_logger(loglevel: int):
