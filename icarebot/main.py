@@ -46,7 +46,7 @@ def subscribe_all_subreddits(reddit: praw.Reddit):
                     comment.body[:10],
                     "https://reddit.com" + comment.permalink,
                 )
-                response = get_response(comment.body)
+                response = get_response()
                 LOGGER.info("Sending a response: %s", response)
                 reply = comment.reply(response)
                 LOGGER.info("Comment was created at %s", reply.permalink)
@@ -63,40 +63,9 @@ def should_I_care(text: str) -> bool:
     return "i don't care" in text.lower()
 
 
-def get_response(text: str) -> str:
+def get_response() -> str:
     """Returns a bot's response"""
-    search_str = "i don't care"
-    offset = 5
-    idx = text.lower().find(search_str)
-    end_pos = idx + len(search_str) + offset
-
-    target_text = text[idx - offset : end_pos]
-
-    if idx == 0:
-        if end_pos < len(text):
-            # ellipsis
-            return """
-> {}...
-
-I care""".format(
-                text[:end_pos]
-            )
-
-        # there's no word coming after
-        return """
-> {}
-
-I care""".format(
-            text[:end_pos]
-        )
-
-    # ellipsis always
-    return """
-> ...{}...
-
-I care""".format(
-        target_text
-    )
+    return "I care"
 
 
 def is_not_icarebot(comment: praw.models.Comment) -> bool:
