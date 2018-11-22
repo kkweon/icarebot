@@ -7,8 +7,6 @@ Reddit icarebot
 
 - python 3.6
 
-
-
 ## Run
 
 - Copy [praw.ini.template](./praw.ini.template) and rename to praw.ini
@@ -21,5 +19,11 @@ Reddit icarebot
     ```
 - Run
     ```
-    python3 src/main.py
+    python3 icarebot/main.py
+    ```
+
+    or
+
+    ```
+    docker-compose up -d
     ```
