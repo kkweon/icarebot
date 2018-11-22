@@ -46,7 +46,7 @@ def subscribe_all_subreddits(reddit: praw.Reddit):
                     comment.body[:10],
                     "https://reddit.com" + comment.permalink,
                 )
-                response = get_response()
+                response = get_response(comment.body)
                 LOGGER.info("Sending a response: %s", response)
                 reply = comment.reply(response)
                 LOGGER.info("Comment was created at %s", reply.permalink)
@@ -55,7 +55,7 @@ def subscribe_all_subreddits(reddit: praw.Reddit):
                 LOGGER.error("Error occurred: %s", e)
 
 
-def should_I_care(text) -> bool:
+def should_I_care(text: str) -> bool:
     """
     >>> should_I_care("I don't care")
     True
@@ -63,9 +63,40 @@ def should_I_care(text) -> bool:
     return "i don't care" in text.lower()
 
 
-def get_response() -> str:
+def get_response(text: str) -> str:
     """Returns a bot's response"""
-    return "I care"
+    search_str = "i don't care"
+    offset = 5
+    idx = text.lower().find(search_str)
+    end_pos = idx + len(search_str) + offset
+
+    target_text = text[idx - offset : end_pos]
+
+    if idx == 0:
+        if end_pos < len(text):
+            # ellipsis
+            return """
+> {}...
+
+I care""".format(
+                text[:end_pos]
+            )
+
+        # there's no word coming after
+        return """
+> {}
+
+I care""".format(
+            text[:end_pos]
+        )
+
+    # ellipsis always
+    return """
+> ...{}...
+
+I care""".format(
+        target_text
+    )
 
 
 def setup_logger(loglevel: int):
