@@ -1,0 +1,10 @@
+version: "3"
+services:
+    icarebot:
+        build: .
+        volumes:
+            - .:/code
+            - /tmp:/tmp
+        deploy:
+            restart_policy:
+                condition: any
