@@ -1,7 +1,7 @@
 version: "3"
 services:
     icarebot:
-        build: .
+        image: kkweon/icarebot
         volumes:
             - .:/code
             - /tmp:/tmp
