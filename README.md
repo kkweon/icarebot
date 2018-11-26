@@ -25,5 +25,6 @@ Reddit icarebot
     or
 
     ```
+    docker build -t icarebot .
     docker-compose up -d
     ```
