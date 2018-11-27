@@ -62,6 +62,7 @@ confidence=
 # --disable=W".
 disable=print-statement,
         bad-continuation,
+        no-else-return,
         broad-except,
         missing-docstring,
         invalid-name,

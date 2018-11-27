@@ -2,7 +2,9 @@
 MAIN CLI APP
 """
 import logging
+import sys
 from configparser import NoSectionError
+from typing import Optional
 
 import praw
 
@@ -34,6 +36,10 @@ def get_reddit_instance() -> praw.Reddit:
     return reddit
 
 
+def with_reddit_prefix(url: str) -> str:
+    return "https://reddit.com" + url
+
+
 def subscribe_all_subreddits(reddit: praw.Reddit):
     """Subscribe to all subreddit"""
     all_subreddits = reddit.subreddit("all")
@@ -45,12 +51,26 @@ def subscribe_all_subreddits(reddit: praw.Reddit):
                     LOGGER.info(
                         "Found a target: %s %s",
                         comment.body[:10],
-                        "https://reddit.com" + comment.permalink,
+                        with_reddit_prefix(comment.permalink),
                     )
                     response = get_response()
                     LOGGER.info("Sending a response: %s", response)
                     reply = comment.reply(response)
-                    LOGGER.info("Comment was created at %s", reply.permalink)
+                    LOGGER.info(
+                        "Comment was created at %s", with_reddit_prefix(reply.permalink)
+                    )
+                elif is_reply(comment):
+                    LOGGER.info(
+                        "Found a response by human: %s",
+                        with_reddit_prefix(comment.permalink),
+                    )
+                    reply_response = get_reply_response(comment.body)
+                    if reply_response:
+                        reply = comment.reply(reply_response)
+                        LOGGER.info("[Success] %s", with_reddit_prefix(reply.permalink))
+            except KeyboardInterrupt:
+                print("Bye")
+                sys.exit(0)
             except Exception as e:
                 LOGGER.error("Error occurred: %s", e)
 
@@ -61,6 +81,31 @@ def should_I_care(text: str) -> bool:
     True
     """
     return "i don't care" in text.lower()
+
+
+def is_reply(comment: praw.models.Comment) -> bool:
+    if comment.is_root:
+        return False
+
+    text = comment.body.lower()
+
+    if text == "good bot" or text == "bad bot":
+        parent = comment.parent()
+        return (
+            isinstance(parent, praw.models.Comment)
+            and parent.author
+            and parent.author.name == "icarebot"
+        )
+    return False
+
+
+def get_reply_response(message: str) -> Optional[str]:
+    if message.lower() == "good bot":
+        return "Thank you, kind human being"
+    elif message.lower() == "bad bot":
+        return "I am sorry human being :("
+
+    return None
 
 
 def get_response() -> str:
