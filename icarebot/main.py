@@ -89,7 +89,7 @@ def is_reply(comment: praw.models.Comment) -> bool:
 
     text = comment.body.lower()
 
-    if text == "good bot" or text == "bad bot":
+    if text in ("good bot", "bad bot"):
         parent = comment.parent()
         return (
             isinstance(parent, praw.models.Comment)
